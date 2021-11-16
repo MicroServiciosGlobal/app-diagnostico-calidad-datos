@@ -13,7 +13,17 @@ body {
 	font-weight: bold;
 	color: #333;
 }
-
+.repuesta_panel{
+	width: 100%;
+	max-width: 600px;
+	display:flex;
+	align-items:center;
+	color:white;
+}
+.repuesta_panel i{
+	padding:1em;
+	font-size:5em;
+}
 .uploader {
 	display: block;
 	clear: both;
@@ -146,10 +156,13 @@ body {
   }
 
   /* ITEMS */
-
+.items{
+	width: 100%;
+}
   .item {
 	display: flex;
 	width: 100%;
+	justify-content: space-between;
 	background: #fff;
 	border-radius: 7px;
 	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
@@ -213,5 +226,15 @@ body {
 		display: flex;
 		align-items: center;
 		justify-content: flex-end;
+	}
+	.repuesta_panel{
+		flex-direction: column;
+	}
+	.repuesta_panel *{
+		text-align: center;
+	}
+	.repuesta_panel i{
+		padding:1em;
+		font-size:5em;
 	}
 }

@@ -30,83 +30,96 @@
 	<!-- Cargar archivo -->
 	<div class="row">
 		<div class="col-12 d-flex justify-content-center">
-		<!-- Upload  -->
-		<form id="file-upload-form" class="uploader">
-			<!-- type csv -->
-			<input id="file-upload" type="file" name="file-upload"  accept=".svg" />
-		
-			<label for="file-upload" id="file-drag">
-				<div id="start">
-					<i class="fa fa-download" aria-hidden="true"></i>
-					<div>Seleccione o arrastre un archivo</div>
-					<div id="notdata" class="hidden">Por favor, seleccione un archivo de tipo <b>.CSV</b>.</div>
-					<span id="file-upload-btn" class="btn btn-primary">Seleccionar Archivo</span>
-					<br>
-					<span id="mensaje_archivo"></span>
-				</div>
-			</label>
-			<label for="email" id="email">Email de la persona que recibirá la respuesta
-					<input type="text" placeholder="Email" id="email" name="email" class="form-control">
-			</label>
-			<label for="email" id="email"> La respuesta puede tardar hasta 24 horas
-				<br>
-				<button type="button" id="file-submit" class="btn btn-primary">Enviar</button>
-				<div id="response" class="">
-					<div id="messages"></div>
-					<progress class="progress" id="file-progress" value="0">
-					<span>70</span>%
-					</progress>
-				</div>
-			</label>
-		</form>
+			<!-- Upload  -->
+			<form id="file-upload-form" class="uploader">
+				<!-- type csv -->
+				<input id="file-upload" type="file" name="file-upload"  accept=".csv" />
+			
+				<label for="file-upload" id="file-drag">
+					<div id="start">
+						<i class="fa fa-download" aria-hidden="true"></i>
+						<div>Seleccione o arrastre un archivo</div>
+						<div id="notdata" class="hidden">Por favor, seleccione un archivo de tipo <b>.CSV</b>.</div>
+						<div id="notdata" class="hidden">El archivo no puede superar los <b>100Mb</b>.</div>
+						<span id="file-upload-btn" class="btn btn-primary">Seleccionar Archivo</span>
+						<br>
+						<span id="mensaje_archivo"></span>
+					</div>
+					<div id="response" class="">
+						<div id="messages"></div>
+						<progress class="progress " id="file-progress" value="0">
+						<span>70</span>%
+						</progress>
+					</div>
+				</label>
+				<label for="email" >Email de la persona que recibirá la respuesta
+						<input type="text" placeholder="Email" id="email" name="email" class="form-control">
+				</label>
+				<!-- boton enviar -->
+				<label for="submit" id="submit">
+					<input type="button" value="Subir y procesar" id="submit" class="btn btn-primary">
+				</label>
+			</form>
 		</div>
 	</div>
-
-	<hr>
-	<h2>Resultados:</h2>
-	<!-- items -->
-	<container>
+	<!-- Resultado -->
+	<div class="row">
+		<div class="col-12 d-flex justify-content-center">
+			<div id="valido" class="repuesta_panel  bg-success d-none">
+				<i class="fa fa-check-circle" aria-hidden="true"></i>
+				<div>
+					<h3>Archivo valido</h3>
+					<p>El archivo se ha cargado correctamente y se está procesando...</p>
+					<p>La respuesta llegará al correo : <b id="correo_a_enviar"></b> </p>
+					<p>El envío de correo puede tardar hasta 24 horas</p>
+				</div>
+			</div>
+		</div>
+	</div>
+		<!-- Tamaño -->
 		<div class="row">
 			<div class="col-12 d-flex justify-content-center">
-				<div class="items">
-					<div class="item item-danger">
-						<div class="item-title">
-							<i class="fa fa-times"></i>
-							<span>Criterio 1</span>
-						</div>
-						<div class="item-description">
-							<span><b>Resultado:</b> Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim in veritatis animi aliquid doloremque aperiam voluptate repellendus aspernatur aut repudiandae possimus magnam ut reiciendis est exercitationem impedit odio, corporis accusantium.</span>
-						</div>
-						<div class="item-calification">
-							<b>0/8</b>
+				<div id="tamanio" class="repuesta_panel  bg-warning d-none">
+					<i class="fa fa-times-circle" aria-hidden="true"></i>
+					<div>
+						<h3>Archivo Invalido</h3>
+						<p>El archivo no puede superar los 100Mb</p>
+					</div>
+				</div>
+			</div>
+		</div>
+				<!-- Email -->
+				<div class="row">
+					<div class="col-12 d-flex justify-content-center">
+						<div id="email_error" class="repuesta_panel  bg-warning d-none">
+							<i class="fa fa-times-circle" aria-hidden="true"></i>
+							<div>
+								<h3>Email Invalido</h3>
+								<p>Verifique el email ingresado</p>
+							</div>
 						</div>
 					</div>
-				
-					<div class="item item-warning">
-						<div class="item-title">
-							<i class="fa fa-exclamation-triangle"></i>
-							<span>Criterio 2</span>
-						</div>
-						<div class="item-description">
-							<span><b>Resultado:</b> Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim in veritatis animi aliquid doloremque aperiam voluptate repellendus aspernatur aut repudiandae possimus magnam ut reiciendis est exercitationem impedit odio, corporis accusantium.</span>
-						</div>
-						<div class="item-calification">
-							<b>0/8</b>
-						</div>
-					</div>
-				
-					<div class="item item-success">
-						<div class="item-title">
-							<i class="fa fa-check"></i>
-							<span>Criterio 3</span>
-						</div>
-						<div class="item-description">
-							<span><b>Resultado:</b> Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim in veritatis animi aliquid doloremque aperiam voluptate repellendus aspernatur aut repudiandae possimus magnam ut reiciendis est exercitationem impedit odio, corporis accusantium.</span>
-						</div>
-						<div class="item-calification">
-							<b>0/8</b>
-						</div>
-					</div>
+				</div>
+	<!-- Resultado negativo -->
+	<div class="row">
+		<div class="col-12 d-flex justify-content-center">
+			<div id="invalido" class="repuesta_panel  bg-danger d-none">
+				<i class="fa fa-times-circle" aria-hidden="true"></i>
+				<div>
+					<h3>Archivo invalido</h3>
+					<p>El archivo no se ha cargado correctamente</p>
+					<p>Por favor, seleccione un archivo de tipo <b>.CSV</b>.</p>
+				</div>
+			</div>
+		</div>
+		<!-- items -->
+	<container class="d-none">
+		<hr>
+		<h2>Resultados:</h2>
+		<div class="row">
+			<div class="col-12 d-flex justify-content-center">
+				<div class="items" id="respuesta_items">
+					
 				</div>
 			</div>
 		</div>
