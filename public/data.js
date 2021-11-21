@@ -1,4 +1,3 @@
-
 function sendFile(file) {
 	const config ={
 		onUploadProgress: function(progressEvent) {		
@@ -9,38 +8,60 @@ function sendFile(file) {
 			messages.innerHTML = 'Cargando archivo...' + percentCompleted + '%';
 			if(percentCompleted == 100){
 				messages.innerHTML = 'Conectando con el servicio de procesamiento...';
-				messages.innerHTML = '\n esto puede tardar unos minutos...';
+				messages.innerHTML += '\n esto puede tardar unos minutos...';
 			}
 		}
 	}
+	let formulario_carga = document.getElementById('formulario_carga');
+	let resultados_server = document.getElementById('resultados_server');
+	formulario_carga.classList.add('d-none');
+	resultados_server.classList.remove('d-none');
 	const formData = new FormData();
 	formData.append('file', file);
 	formData.append('email', document.getElementById('email').value);
 	document.getElementById('file-progress').value = (0);
+
 	axios.post('/upload',  formData, config)
 		.then(function (response) {
-			let messages =document.getElementById('messages');
-			messages.innerHTML = 'Archivo cargado correctamente';
-			let json =  response.data;
-			 json = new Map(Object.entries(json));
+			// if sttus is 500
+			if(response.status == 500){
+				document.getElementById('file-progress').value = (0);
+				document.querySelector('#respuesta_items').innerHTML = 'Error en el servidor:' + response.statusText;
+			}else{
+				let messages =document.getElementById('messages');
+				messages.innerHTML = 'Archivo cargado correctamente';
+				let json =  response.data;
+				json = new Map(Object.entries(json));
 
-			let html = "";
-			// json to array
-			// for json
-			let count = 0;
-			Array.from(json).forEach(element => {
+				let html = "";
+				// json to array
+				// for json
+				let count = 0;
+				Array.from(json).forEach(element => {
+					if (element[0] !== 'Conjunto de datos'  && element[0] !== 'tamaño' && element[0] !== 'email'){
+						// si es un numero
+						if(!isNaN(element[1])){
+							if(element[1] < 6){
+								html += '<div class="item item-danger">';
+							}else{
+								html += '<div class="item item-success">';
+							}
+						}else{
+							html += '<div class="item item-success">';
+						}
+						html += `
+							<div class="item-title">
+								<span>${element[0]}</span>
+							</div>
+							<div class="item-calification">
+								<b>${element[1]}/10</b>
+							</div>
+						</div>`;
+					}
 
-				html += `<div class="item item-success">
-					<div class="item-title">
-						<i class="fa fa-check"></i>
-						<span>${element[0]}</span>
-					</div>
-					<div class="item-calification">
-						<b>${element[1]}/10</b>
-					</div>
-				</div>`;
-			});
-			document.querySelector('#respuesta_items').innerHTML = html;
+				});
+				document.querySelector('#respuesta_items').innerHTML = html;
+			}
 		}
 	);
 }
@@ -49,6 +70,29 @@ function sendFile(file) {
 function fileDragHover(e) {
 	e.stopPropagation();
 	e.preventDefault();
+	if (e.type === 'dragover') {
+		document.getElementById('file-drag').classList.add('hover');
+	}else{
+		document.getElementById('file-drag').classList.remove('hover');
+	}
+	// hover element
+	document.getElementById('file-drag').classList.toggle('is-dragover', e.type === 'dragover');
+}
+function fileDropHandler(e) {
+	let nom_archivo = "";
+	let input_file = document.getElementById('file-upload');
+	if(e.type === 'drop'){
+		nom_archivo = e.dataTransfer.files[0].name;
+		input_file.files = e.dataTransfer.files;
+	}else if(e.type === 'change'){
+		nom_archivo = e.target.files[0].name;
+	}
+	e.stopPropagation();
+	e.preventDefault();
+	document.getElementById('response_message').innerHTML ='Archivo <b>' + nom_archivo + '</b> cargado correctamente';
+	document.getElementById('start').classList.add('d-none');
+	document.getElementById('file-drag').classList.remove('hover');
+	document.getElementById('response').classList.remove('d-none');
 }
 function fileSelectHandler() {
 	document.getElementById('valido').classList.add('d-none');
@@ -70,7 +114,6 @@ function fileSelectHandler() {
 			return;
 		}
 	}
-	messages.innerHTML = 'Cargando archivo...';
 	// Fetch FileList object
 
 	if (files.length === 0) {
@@ -96,12 +139,30 @@ function fileSelectHandler() {
 		document.getElementById('invalido').classList.remove('d-none');
 	}
   }
-
+function reloadFile(){
+	let file = document.getElementById('file-upload');
+	file.value = '';
+	document.getElementById('file-drag').classList.remove('hover');
+	document.getElementById('file-drag').classList.remove('is-dragover');
+	document.getElementById('valido').classList.add('d-none');
+	document.getElementById('invalido').classList.add('d-none');
+	document.getElementById('tamanio').classList.add('d-none');
+	document.getElementById('email_error').classList.add('d-none');
+	document.getElementById('start').classList.remove('d-none');
+	document.getElementById('file-progress').value = (0);
+	document.getElementById('messages').innerHTML = '';
+	document.getElementById('response').classList.add('d-none');
+}
 window.onload = function () {
 	var fileDrag = document.getElementById('file-drag');
 	var fileSelect = document.getElementById('file-upload');
 	let submit = document.getElementById('submit');
+	let reload_file = document.getElementById('file-reload-btn');
 	fileDrag.addEventListener('dragover', fileDragHover, false);
 	fileDrag.addEventListener('dragleave', fileDragHover, false);
+	fileDrag.addEventListener('drop', fileDropHandler, false);
+	fileSelect.addEventListener('change', fileDropHandler, false);
 	submit.addEventListener('click', fileSelectHandler, false);
+	reload_file.addEventListener('click', reloadFile, false);
+	
 }
