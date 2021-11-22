@@ -110,7 +110,7 @@ function fileSelectHandler() {
 	}else{
 	let validar = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 		if(!validar.test(input_email.value)){
-			document.getElementById('email_error').classList.add('d-none');
+			document.getElementById('email_error').classList.remove('d-none');
 			return;
 		}
 	}
