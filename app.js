@@ -74,16 +74,17 @@ app.post('/upload', uploadStrategy, (req, res) => {
 						let count = 0; // variable para el contador
 						Array.from(json).forEach(element => { // recorrer el json
 							if (element[0] !== 'Conjunto de datos'  && element[0] !== 'tamaño' && element[0] !== 'email'){
-
-								tabla += `<div class="item item-success" style="background-color: white; max-width:600px; width:100%;padding: .5em;border-radius: 10px;display:flex;margin-bottom:1em;">
-								<div class="item-title" style="width: 100%;">
-										<i class="fa fa-check"></i>
-										<span>${element[0]}</span>
-									</div>
-									<div class="item-calification">
-										<b>${element[1]}/10</b>
-									</div>
-								</div>`; // generar la tabla
+								if (element[0] !== 'N/A'){
+									tabla += `<div class="item item-success" style="background-color: white; max-width:600px; width:100%;padding: .5em;border-radius: 10px;display:flex;margin-bottom:1em;">
+									<div class="item-title" style="width: 100%;">
+											<i class="fa fa-check"></i>
+											<span>${element[0]}</span>
+										</div>
+										<div class="item-calification">
+											<b>${element[1]}/10</b>
+										</div>
+									</div>`; // generar la tabla
+								}
 							}
 						});
 						let html = email_html(tabla) // generar el html
