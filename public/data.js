@@ -38,27 +38,37 @@ function sendFile(file) {
 				// for json
 				let count = 0;
 				Array.from(json).forEach(element => {
+					mas_informacion = "";
 					if (element[0] !== 'Conjunto de datos'  && element[0] !== 'tamaño' && element[0] !== 'email'){
-						// si es un numero
-						if(!isNaN(element[1])){
-							if(element[1] < 6){
-								html += '<div class="item item-danger">';
+						// si es un 
+							
+						if(element[1] !== 'N/A'){
+
+							if(!isNaN(element[1])){
+								if(element[1] < 4){
+									html += '<div class="item item-danger">';
+								}else if(element[1] < 6){
+									mas_informacion = '<div class="item-subtitle"><a href="https://app.powerbi.com/view?r=eyJrIjoiYzg1Y2RlOTAtYWVmMC00YmM2LWE1YmUtNGM1MDdhYTkzN2Y3IiwidCI6IjFhMDY3M2M2LTI0ZTEtNDc2ZC1iYjRkLWJhNmE5MWEzYzU4OCIsImMiOjR9&pageName=ReportSection" target="_blank">Más Información</a></div>';
+									html += '<div class="item item-warning">';
+								}else{
+									mas_informacion = '<div class="item-subtitle"><a href="https://app.powerbi.com/view?r=eyJrIjoiYzg1Y2RlOTAtYWVmMC00YmM2LWE1YmUtNGM1MDdhYTkzN2Y3IiwidCI6IjFhMDY3M2M2LTI0ZTEtNDc2ZC1iYjRkLWJhNmE5MWEzYzU4OCIsImMiOjR9&pageName=ReportSection" target="_blank">Más Información</a></div>';
+									html += '<div class="item item-success">';
+								}
 							}else{
 								html += '<div class="item item-success">';
 							}
-						}else{
-							html += '<div class="item item-success">';
-						}
-						html += `
-							<div class="item-title">
-								<span>${element[0]}</span>
-							</div>
-							<div class="item-calification">
-								<b>${element[1]}/10</b>
-							</div>
-						</div>`;
-					}
 
+							html += `
+								<div class="item-title">
+									<span>${element[0]}</span>
+								</div>
+								<div class="item-calification">
+								<b>${element[1]}/10</b>
+								${mas_informacion}
+								</div>
+							</div>`;
+						}
+					}
 				});
 				document.querySelector('#respuesta_items').innerHTML = html;
 			}
@@ -158,11 +168,15 @@ window.onload = function () {
 	var fileSelect = document.getElementById('file-upload');
 	let submit = document.getElementById('submit');
 	let reload_file = document.getElementById('file-reload-btn');
+	let reload_button = document.getElementById('reload-page');
 	fileDrag.addEventListener('dragover', fileDragHover, false);
 	fileDrag.addEventListener('dragleave', fileDragHover, false);
 	fileDrag.addEventListener('drop', fileDropHandler, false);
 	fileSelect.addEventListener('change', fileDropHandler, false);
 	submit.addEventListener('click', fileSelectHandler, false);
 	reload_file.addEventListener('click', reloadFile, false);
+	reload_button.addEventListener('click', () =>{
+		window.location.reload();
+	});
 	
 }
