@@ -213,6 +213,7 @@ body {
 .item .item-calification{
 	display: flex;
 	white-space: nowrap;
+	flex-direction: column;
 	align-items: center;
 	padding-left: 2em;
 	padding-right: 2em;
@@ -246,7 +247,6 @@ body {
 	.item .item-calification{
 		width: 100%;
 		display: flex;
-		flex-direction: column;
 		align-items: center;
 		justify-content: flex-end;
 	}
