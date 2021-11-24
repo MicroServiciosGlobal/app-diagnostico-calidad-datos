@@ -18,7 +18,6 @@ function sendFile(file) {
 	resultados_server.classList.remove('d-none');
 	const formData = new FormData();
 	formData.append('file', file);
-	formData.append('email', document.getElementById('email').value);
 	document.getElementById('file-progress').value = (0);
 
 	axios.post('/upload',  formData, config)
@@ -27,49 +26,57 @@ function sendFile(file) {
 			if(response.status == 500){
 				document.getElementById('file-progress').value = (0);
 				document.querySelector('#respuesta_items').innerHTML = 'Error en el servidor:' + response.statusText;
-			}else{
-				let messages =document.getElementById('messages');
-				messages.innerHTML = 'Archivo cargado correctamente';
-				let json =  response.data;
-				json = new Map(Object.entries(json));
+			}else if(response.status == 200){
+				try {
+					let messages =document.getElementById('messages');
+					messages.innerHTML = 'Archivo cargado correctamente';
+					let json =  response.data;
+					json = new Map(Object.entries(json));
 
-				let html = "";
-				// json to array
-				// for json
-				let count = 0;
-				Array.from(json).forEach(element => {
-					mas_informacion = "";
-					if (element[0] !== 'Conjunto de datos'  && element[0] !== 'tamaño' && element[0] !== 'email'){
-						// si es un 
-							
-						if(element[1] !== 'N/A'){
+					let html = "";
+					// json to array
+					// for json
+					let count = 0;
+					Array.from(json).forEach(element => {
+						mas_informacion = "";
+						if (element[0] !== 'Conjunto de datos'  && element[0] !== 'tamaño' && element[0] !== 'email') {
+							// si es un 
+								
+							if(element[1] !== 'N/A'){
 
-							if(!isNaN(element[1])){
-								if(element[1] < 4){
-									html += '<div class="item item-danger">';
-								}else if(element[1] < 6){
-									mas_informacion = '<div class="item-subtitle"><a href="https://app.powerbi.com/view?r=eyJrIjoiYzg1Y2RlOTAtYWVmMC00YmM2LWE1YmUtNGM1MDdhYTkzN2Y3IiwidCI6IjFhMDY3M2M2LTI0ZTEtNDc2ZC1iYjRkLWJhNmE5MWEzYzU4OCIsImMiOjR9&pageName=ReportSection" target="_blank">Más Información</a></div>';
-									html += '<div class="item item-warning">';
+								if(!isNaN(element[1])){
+									if(element[1] < 4){
+										html += '<div class="item item-danger">';
+									}else if(element[1] < 6){
+										mas_informacion = '<div class="item-subtitle"><a href="https://app.powerbi.com/view?r=eyJrIjoiYzg1Y2RlOTAtYWVmMC00YmM2LWE1YmUtNGM1MDdhYTkzN2Y3IiwidCI6IjFhMDY3M2M2LTI0ZTEtNDc2ZC1iYjRkLWJhNmE5MWEzYzU4OCIsImMiOjR9&pageName=ReportSection" target="_blank">Más Información</a></div>';
+										html += '<div class="item item-warning">';
+									}else{
+										html += '<div class="item item-success">';
+									}
 								}else{
 									html += '<div class="item item-success">';
 								}
-							}else{
-								html += '<div class="item item-success">';
-							}
 
-							html += `
-								<div class="item-title">
-									<span>${element[0]}</span>
-								</div>
-								<div class="item-calification">
-								<b>${element[1]}/10</b>
-								${mas_informacion}
-								</div>
-							</div>`;
+								html += `
+									<div class="item-title">
+										<span>${element[0]}</span>
+									</div>
+									<div class="item-calification">
+									<b>${element[1]}/10</b>
+									${mas_informacion}
+									</div>
+								</div>`;
+							}
 						}
-					}
-				});
-				document.querySelector('#respuesta_items').innerHTML = html;
+					});
+					document.querySelector('#respuesta_items').innerHTML = html;
+				} catch (error) {
+					document.getElementById('file-progress').value = (0);
+					document.querySelector('#respuesta_items').innerHTML = 'Error en el servidor:' + error;
+				}
+			}else{
+				document.getElementById('file-progress').value = (0);
+				document.querySelector('#respuesta_items').innerHTML = 'Error en el servidor:' + response.statusText;
 			}
 		}
 	);
@@ -107,23 +114,8 @@ function fileSelectHandler() {
 	document.getElementById('valido').classList.add('d-none');
 	document.getElementById('invalido').classList.add('d-none');
 	document.getElementById('tamanio').classList.add('d-none');
-	document.getElementById('email_error').classList.add('d-none');
 	let input_file = document.getElementById('file-upload');
-	let input_email = document.getElementById('email');
 	let files = input_file.files;
-
-	if(input_email.value == '' || input_email.value == null || input_email.value == undefined){
-		// validar si es un email
-		document.getElementById('email_error').classList.remove('d-none');
-		return;
-	}else{
-	let validar = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-		if(!validar.test(input_email.value)){
-			document.getElementById('email_error').classList.remove('d-none');
-			return;
-		}
-	}
-	// Fetch FileList object
 
 	if (files.length === 0) {
 		document.getElementById('invalido').classList.remove('d-none');
@@ -139,7 +131,6 @@ function fileSelectHandler() {
 	if (ext == "csv") {
 		if (files[0].size < 100000000) {
 			document.getElementById('valido').classList.remove('d-none');
-			document.getElementById('correo_a_enviar').innerHTML = input_email.value;
 			sendFile(files[0]);
 		} else {
 			document.getElementById('tamanio').classList.remove('d-none');
@@ -156,7 +147,6 @@ function reloadFile(){
 	document.getElementById('valido').classList.add('d-none');
 	document.getElementById('invalido').classList.add('d-none');
 	document.getElementById('tamanio').classList.add('d-none');
-	document.getElementById('email_error').classList.add('d-none');
 	document.getElementById('start').classList.remove('d-none');
 	document.getElementById('file-progress').value = (0);
 	document.getElementById('messages').innerHTML = '';
@@ -179,3 +169,9 @@ window.onload = function () {
 	});
 	
 }
+
+// git user.name = "Dave Villamor"
+// git user.email = "dacovillamor@gmail.com"
+// git config --global user.name "Dave Villamor"
+// git config --global user.email "dacovillamor@gmail.com"
+//	

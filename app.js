@@ -31,7 +31,6 @@ app.post('/upload', uploadStrategy, (req, res) => {
 	const finalBlobName = directory_name + "/" + blobName; // nombre del archivo en la nube
 	const stream = getStream(req.file.buffer); // convertir el array en un stream
 	const streamLength = req.file.buffer.length; // tamaño del archivo en bytes
-	const email = req.body.email; // email del usuario que sube el archivo
 	console.log("Nombre: " +blobName); // información del archivo
 	blobService.createBlockBlobFromStream(containerName, finalBlobName, stream, streamLength, err => {
 		const request = require('request'); // importación de request para consumir la API de resultados
@@ -47,7 +46,6 @@ app.post('/upload', uploadStrategy, (req, res) => {
 				},
 				body: JSON.stringify({ // body
 					"name": blobName, // nombre del archivo en la nube
-					"email": email // email del usuario que sube el archivo
 				})
 			}, (err, response, body) => {
 				try{
@@ -70,25 +68,6 @@ app.post('/upload', uploadStrategy, (req, res) => {
 							};
 						}
 						json = new Map(Object.entries(json)); // convertir el json en un map
-						let tabla = ""; // variable para la tabla
-						let count = 0; // variable para el contador
-						Array.from(json).forEach(element => { // recorrer el json
-							if (element[0] !== 'Conjunto de datos'  && element[0] !== 'tamaño' && element[0] !== 'email'){
-								if (element[0] !== 'N/A'){
-									tabla += `<div class="item item-success" style="background-color: white; max-width:600px; width:100%;padding: .5em;border-radius: 10px;display:flex;margin-bottom:1em;">
-									<div class="item-title" style="width: 100%;">
-											<i class="fa fa-check"></i>
-											<span>${element[0]}</span>
-										</div>
-										<div class="item-calification">
-											<b>${element[1]}/10</b>
-										</div>
-									</div>`; // generar la tabla
-								}
-							}
-						});
-						let html = email_html(tabla) // generar el html
-						sendEmail(email,html); // enviar el email
 						console.log("Volviendo respuesta");
 						res.send(body); // enviar el texto del archivo
 					}
@@ -125,59 +104,5 @@ app.listen( process.env.PORT || 3000, () => {
 	  console.log('listening on port 3000'); // escuchar en el puerto 3000
 });
 
-function sendEmail(email,html){ // función para enviar el email
-	const nodemailer = require("nodemailer"); // importación de nodemailer
-	let transporter = nodemailer.createTransport({ // creación del transporte
-		host: "smtp.gmail.com", // servidor de correo
-		port: 465, // puerto
-		secure: true, // seguro
-		auth: {
-			user: "calidad.datos2021@gmail.com", // usuario
-			pass: "calidad2021", // contraseña
-		}
-	});
-	transporter.verify().then(() => { // verificar el servidor
-		// console.log("servidor listo para recibir mensajes"); // servidor listo para recibir mensajes
-	});
-	transporter.sendMail({ // enviar el email
-		from: '"Calidad Datos" <calidad.datos2021@gmail.com>', // remitente
-		to: email, // destinatario
-		subject: "Resultado de la prueba", // asunto
-		html: html, // html
-	}).then(info => { // enviar el email
-		console.log(info); // información del email
-	}); 
-	
-}
 
-
-function email_html(tabla){ // función para generar el html
-	return `
-	<!DOCTYPE html>
-<html lang="es">
-<head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Calidad de datos</title>
-</head>
-	<div style="background-color:rgb(233,233,233);font-family:'Roboto',sans-serif;width:100%;padding:1.2em;flex-direction: column;align-items: center;">
-	<div></div>
-	<div class="conteneror" style="background-color: white; max-width:600px; width:100%;padding: .5em;border-radius: 10px;margin-bottom: 1em;">
-		<h1 style="text-align:center">Resultados de la prueba de calidad</h1>
-	</div>
-	<div class="conteneror">
-	${tabla}
-	</div>
-</div>
-</html>
-	`; // html
-}
-
-function documentJsonControl(nombre_archivo){
-	// Create json file
-	let json = {}; // variable para el json
-	json[nombre_archivo] = 0; // agregar el nombre del archivo
-	json[email] = 0; // agregar el email
-}
 module.exports = app; // exportar el app
