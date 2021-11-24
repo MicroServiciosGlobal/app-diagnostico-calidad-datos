@@ -169,9 +169,3 @@ window.onload = function () {
 	});
 	
 }
-
-// git user.name = "Dave Villamor"
-// git user.email = "dacovillamor@gmail.com"
-// git config --global user.name "Dave Villamor"
-// git config --global user.email "dacovillamor@gmail.com"
-//	
