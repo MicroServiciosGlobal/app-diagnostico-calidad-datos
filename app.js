@@ -49,6 +49,10 @@ app.post('/upload', uploadStrategy, (req, res) => {
 				})
 			}, (err, response, body) => {
 				try{
+					if (response.statusCode == 500) { 
+						res.status(200).send("error"); // enviar el error
+						return;
+					}
 					if (err) {
 						console.log("Error-data" + err); // error
 						res.status(500).send(err); // error al buscar el archivo en la nube
@@ -100,7 +104,7 @@ app.get('/', (req, res) => {
 	  res.sendFile(path.join(__dirname, 'index.html')); // enviar el archivo index.html
 });
 
-app.listen( process.env.PORT || 3000, () => {
+app.listen( process.env.PORT || 5555, () => {
 	  console.log('listening on port 3000'); // escuchar en el puerto 3000
 });
 

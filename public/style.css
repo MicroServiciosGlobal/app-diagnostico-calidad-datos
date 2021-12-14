@@ -50,6 +50,7 @@ body {
 }
 .uploader {
 	display: block;
+	position: relative;
 	clear: both;
 	margin: 0 auto;
 	width: 100%;
@@ -236,6 +237,15 @@ body {
 .respuesta_server{
 	width: 100%;
 	height: 100%;
+}
+.pasos{
+	position: absolute;
+	top: .5em;
+	left: 1em;
+	color: rgb(70, 70, 70);
+}
+#submit{
+	position: relative;
 }
 @media (max-width: 767px) {
 	.item {

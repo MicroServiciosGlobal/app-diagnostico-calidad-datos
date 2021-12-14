@@ -1,21 +1,21 @@
 function sendFile(file) {
+	let formulario_carga = document.getElementById('formulario_carga');
+	let resultados_server = document.getElementById('resultados_server');
 	const config ={
 		onUploadProgress: function(progressEvent) {		
 			var percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
 			document.getElementById('file-progress').value = (percentCompleted/100);
-			console.log(percentCompleted/100);
 			let messages =document.getElementById('messages');
 			messages.innerHTML = 'Cargando archivo...' + percentCompleted + '%';
 			if(percentCompleted == 100){
 				messages.innerHTML = 'Conectando con el servicio de procesamiento...';
 				messages.innerHTML += '\n esto puede tardar unos minutos...';
+				document.getElementById('valido').classList.remove('d-none');
+				formulario_carga.classList.add('d-none');
+				resultados_server.classList.remove('d-none');
 			}
 		}
 	}
-	let formulario_carga = document.getElementById('formulario_carga');
-	let resultados_server = document.getElementById('resultados_server');
-	formulario_carga.classList.add('d-none');
-	resultados_server.classList.remove('d-none');
 	const formData = new FormData();
 	formData.append('file', file);
 	document.getElementById('file-progress').value = (0);
@@ -27,52 +27,57 @@ function sendFile(file) {
 				document.getElementById('file-progress').value = (0);
 				document.querySelector('#respuesta_items').innerHTML = 'Error en el servidor:' + response.statusText;
 			}else if(response.status == 200){
-				try {
-					let messages =document.getElementById('messages');
-					messages.innerHTML = 'Archivo cargado correctamente';
-					let json =  response.data;
-					json = new Map(Object.entries(json));
+				if(response.data == 'error'){
+					document.querySelector('#respuesta_items').innerHTML = "";
+					document.querySelector('#respuesta_500').classList.remove('d-none');
+				}else{
+					try {
+						let messages =document.getElementById('messages');
+						messages.innerHTML = 'Archivo cargado correctamente';
+						let json =  response.data;
+						json = new Map(Object.entries(json));
 
-					let html = "";
-					// json to array
-					// for json
-					let count = 0;
-					Array.from(json).forEach(element => {
-						mas_informacion = "";
-						if (element[0] !== 'Conjunto de datos'  && element[0] !== 'tamaño' && element[0] !== 'email') {
-							// si es un 
-								
-							if(element[1] !== 'N/A'){
+						let html = "";
+						// json to array
+						// for json
+						let count = 0;
+						Array.from(json).forEach(element => {
+							mas_informacion = "";
+							if (element[0] !== 'Conjunto de datos'  && element[0] !== 'tamaño' && element[0] !== 'email') {
+								// si es un 
+									
+								if(element[1] !== 'N/A'){
 
-								if(!isNaN(element[1])){
-									if(element[1] < 4){
-										html += '<div class="item item-danger">';
-									}else if(element[1] < 6){
-										mas_informacion = '<div class="item-subtitle"><a href="https://app.powerbi.com/view?r=eyJrIjoiYzg1Y2RlOTAtYWVmMC00YmM2LWE1YmUtNGM1MDdhYTkzN2Y3IiwidCI6IjFhMDY3M2M2LTI0ZTEtNDc2ZC1iYjRkLWJhNmE5MWEzYzU4OCIsImMiOjR9&pageName=ReportSection" target="_blank">Más Información</a></div>';
-										html += '<div class="item item-warning">';
+									if(!isNaN(element[1])){
+										if(element[1] < 4){
+											html += '<div class="item item-danger">';
+										}else if(element[1] < 6){
+											mas_informacion = '<div class="item-subtitle"><a href="https://app.powerbi.com/view?r=eyJrIjoiYzg1Y2RlOTAtYWVmMC00YmM2LWE1YmUtNGM1MDdhYTkzN2Y3IiwidCI6IjFhMDY3M2M2LTI0ZTEtNDc2ZC1iYjRkLWJhNmE5MWEzYzU4OCIsImMiOjR9&pageName=ReportSection" target="_blank">Más Información</a></div>';
+											html += '<div class="item item-warning">';
+										}else{
+											html += '<div class="item item-success">';
+										}
 									}else{
 										html += '<div class="item item-success">';
 									}
-								}else{
-									html += '<div class="item item-success">';
-								}
 
-								html += `
-									<div class="item-title">
-										<span>${element[0]}</span>
-									</div>
-									<div class="item-calification">
-									<b>${element[1]}/10</b>
-									${mas_informacion}
-									</div>
-								</div>`;
+									html += `
+										<div class="item-title">
+											<span>${element[0]}</span>
+										</div>
+										<div class="item-calification">
+										<b>${element[1]}/10</b>
+										${mas_informacion}
+										</div>
+									</div>`;
+								}
 							}
-						}
-					});
-					document.querySelector('#respuesta_items').innerHTML = html;
-				} catch (error) {
-					document.getElementById('file-progress').value = (0);
-					document.querySelector('#respuesta_items').innerHTML = 'Error en el servidor:' + error;
+						});
+						document.querySelector('#respuesta_items').innerHTML = html;
+					} catch (error) {
+						document.getElementById('file-progress').value = (0);
+						document.querySelector('#respuesta_items').innerHTML = 'Error en el servidor:' + error;
+					}
 				}
 			}else{
 				document.getElementById('file-progress').value = (0);
@@ -130,7 +135,6 @@ function fileSelectHandler() {
 
 	if (ext == "csv") {
 		if (files[0].size < 100000000) {
-			document.getElementById('valido').classList.remove('d-none');
 			sendFile(files[0]);
 		} else {
 			document.getElementById('tamanio').classList.remove('d-none');
