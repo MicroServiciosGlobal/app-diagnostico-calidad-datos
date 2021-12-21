@@ -36,7 +36,6 @@ function sendFile(file) {
 						messages.innerHTML = 'Archivo cargado correctamente';
 						let json =  response.data;
 						json = new Map(Object.entries(json));
-
 						let html = "";
 						// json to array
 						// for json
@@ -51,6 +50,7 @@ function sendFile(file) {
 									if(!isNaN(element[1])){
 										if(element[1] < 4){
 											html += '<div class="item item-danger">';
+											mas_informacion = '<div class="item-subtitle"><a href="https://app.powerbi.com/view?r=eyJrIjoiYzg1Y2RlOTAtYWVmMC00YmM2LWE1YmUtNGM1MDdhYTkzN2Y3IiwidCI6IjFhMDY3M2M2LTI0ZTEtNDc2ZC1iYjRkLWJhNmE5MWEzYzU4OCIsImMiOjR9&pageName=ReportSection" target="_blank">Más Información</a></div>';
 										}else if(element[1] < 6){
 											mas_informacion = '<div class="item-subtitle"><a href="https://app.powerbi.com/view?r=eyJrIjoiYzg1Y2RlOTAtYWVmMC00YmM2LWE1YmUtNGM1MDdhYTkzN2Y3IiwidCI6IjFhMDY3M2M2LTI0ZTEtNDc2ZC1iYjRkLWJhNmE5MWEzYzU4OCIsImMiOjR9&pageName=ReportSection" target="_blank">Más Información</a></div>';
 											html += '<div class="item item-warning">';
